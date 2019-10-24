@@ -163,10 +163,9 @@ defmodule CubicBezier do
 
 
   @doc """
-  Given `x` (a float between `0.0` and `1.0`), compute the `y`; which 
-  essentially acts a "speed". Optioanally, a duration can be provided
-  which can provide greater accuracy. The default is 400 (ms), which
-  is a common animation / transition duration.
+  Given `x` (a float between `0.0` and `1.0`), compute the `y`. 
+  Optionally, a duration can be provided which can provide greater accuracy. 
+  The default duration is 400 (ms), which is a common animation / transition duration.
   """
   def solve(x, easing, duration \\ @default_duration)
   when is_atom(easing) do
