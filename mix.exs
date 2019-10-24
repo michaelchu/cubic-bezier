@@ -1,23 +1,20 @@
 defmodule CubicBezier.MixProject do
   use Mix.Project
 
-  @version "0.0.1"
   @github_url "https://github.com/bjunc/cubic-bezier"
 
   def project do
     [
       app: :cubic_bezier,
       description: "Elixir implementation of the CSS cubic-bezier function.",
-      version: @version,
+      version: File.read!("VERSION"),
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: %{
         maintainers: ["Robert Juncosa"],
         licenses: ["MIT"],
-        links: %{
-          "GitHub" => @github_url
-        }
+        links: %{"GitHub" => @github_url}
       },
 
       # Docs
