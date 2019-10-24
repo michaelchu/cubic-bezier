@@ -19,8 +19,16 @@ defmodule CubicBezier.MixProject do
           "GitHub" => @github_url
         }
       },
+
+      # Docs
+      name: "Cubic Bezier",
+      homepage_url: @github_url,
       docs: [
-        main: "getting-started"
+        main: "README",
+        extras: [
+          "README.md",
+          "docs/getting-started.md"
+        ]
       ]
     ]
   end
