@@ -14,7 +14,20 @@ Since `x` is always between `0` and `1`, and `y` is almost always also
 between `0` and `1`, it is useful to treat them as percentages. 
 Where `x` is the percentage of time that has elapsed in your 
 animation / transition, and `y` is the percentage your object(s)
-should have moved between their start and end positions. 
+should have moved between their start and end positions.
+
+
+## Why?
+
+Let's say you want to "tween" (animate / transition) an object's position.
+You might take the travel distance, and divide by the steps ("frames")
+of your tween. On every frame, you'd increment the object's position.
+This would be the equivelant of a linear Cubic Bezier; and it tends 
+to look / feel very unnatural. To make the movement feel more natural,
+you'd use an "easing equation". To further make the animation feel more 
+natural, you'd want to compute the object's position about 60 times 
+per second (60 fps). This will smooth out the position changes to make it 
+feel more fluid. The combination is natural and fluid tweens!
 
 
 ## Syntax
