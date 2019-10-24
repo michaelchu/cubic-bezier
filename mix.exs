@@ -18,7 +18,10 @@ defmodule CubicBezier.MixProject do
         links: %{
           "GitHub" => @github_url
         }
-      }
+      },
+      docs: [
+        main: "getting-started"
+      ]
     ]
   end
 

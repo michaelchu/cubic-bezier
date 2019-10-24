@@ -1,21 +1,19 @@
 # CubicBezier
 
-**TODO: Add description**
+[![Hex.pm Version](https://img.shields.io/hexpm/v/cubic_bezier.svg)](https://hex.pm/packages/cubic_bezier)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://hexdocs.pm/cubic_bezier/)
+
+Elixir port of the CSS cubic-bezier(p1x, p1y, p2x, p2y) function.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `cubic_bezier` to your list of dependencies in `mix.exs`:
+The package can be installed by adding `cubic_bezier` 
+to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:cubic_bezier, "~> 0.1.0"}
+    {:cubic_bezier, "~> 0.0.1"}
   ]
 end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/cubic_bezier](https://hexdocs.pm/cubic_bezier).
-
