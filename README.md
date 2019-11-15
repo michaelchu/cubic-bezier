@@ -13,7 +13,7 @@ to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:cubic_bezier, "~> 0.0.2"}
+    {:cubic_bezier, "~> 0.0.5"}
   ]
 end
 ```
