@@ -1,7 +1,7 @@
 defmodule CubicBezier do
   @moduledoc """
   Elixir port of the the JavaScript port of Webkit implementation of 
-  CSS cubic-bezier(p1x.p1y,p2x,p2y) by http://mck.me
+  CSS `cubic-bezier(p1x, p1y, p2x, p2y)` by http://mck.me
 
   http://svn.webkit.org/repository/webkit/trunk/Source/WebCore/platform/graphics/UnitBezier.h
   https://gist.github.com/mckamey/3783009
@@ -13,31 +13,29 @@ defmodule CubicBezier do
   @default_duration 400
   
 
-  @doc """
-  The epsilon value we pass to UnitBezier::solve given that the animation 
-  is going to run over |dur| seconds.
+  # The epsilon value we pass to UnitBezier::solve given that the animation 
+  # is going to run over |dur| seconds.
 
-  The longer the animation, the more precision we need in the timing function 
-  result to avoid ugly discontinuities.
+  # The longer the animation, the more precision we need in the timing function 
+  # result to avoid ugly discontinuities.
 
-	http://svn.webkit.org/repository/webkit/trunk/Source/WebCore/page/animation/AnimationBase.cpp
-  """
-  def solve_epsilon(duration) do
+	# http://svn.webkit.org/repository/webkit/trunk/Source/WebCore/page/animation/AnimationBase.cpp
+  defp solve_epsilon(duration) do
     1.0 / (200.0 * duration)
   end
 
 
-  @doc """
-  Defines a cubic-bezier curve given the middle two control points.
-	NOTE: first and last control points are implicitly (0,0) and (1,1).
-  
-    @param p1x {number} X component of control point 1
-	  @param p1y {number} Y component of control point 1
-	  @param p2x {number} X component of control point 2
-	  @param p2y {number} Y component of control point 2
-  """
-  def calculate_coefficients({p1x, p1y, p2x, p2y}) do
-    # Calculate the polynomial coefficients, implicit first and last control points are (0,0) and (1,1).
+  # Defines a cubic-bezier curve given the middle two control points.
+	# NOTE: first and last control points are implicitly (0,0) and (1,1).
+  # 
+  # `p1x` is the `X` component of control point `1`  
+	# `p1y` is the `Y` component of control point `1`  
+	# `p2x` is the `X` component of control point `2`  
+	# `p2y` is the `Y` component of control point `2`  
+  @spec calculate_coefficients(tuple) :: tuple
+  defp calculate_coefficients({p1x, p1y, p2x, p2y}) do
+    # Calculate the polynomial coefficients
+    # Implicit first and last control points are (0,0) and (1,1).
 
     # X component of Bezier coefficient C
 		cx = 3.0 * p1x
@@ -61,42 +59,36 @@ defmodule CubicBezier do
   end
 
 
-  @doc """
-    @param t {number} parametric timing value
-    @return {number}
-  """
-  def sample_curve_x(t, {ax, bx, cx, _ay, _by, _cy}) do
+  
+  #`t` is the parametric timing value
+  @spec sample_curve_x(float, tuple) :: float
+  defp sample_curve_x(t, {ax, bx, cx, _ay, _by, _cy}) do
     # `ax t^3 + bx t^2 + cx t' expanded using Horner's rule.
     ((ax * t + bx) * t + cx) * t
   end
 
     
-  @doc """
-    @param t {number} parametric timing value
-    @return {number}
-  """
-  def sample_curve_y(t, {_ax, _bx, _cx, ay, by, cy}) do
+  # `t` is the parametric timing value.
+  @spec sample_curve_y(float, tuple) :: float
+  defp sample_curve_y(t, {_ax, _bx, _cx, ay, by, cy}) do
     ((ay * t + by) * t + cy) * t
   end
 
 
-  @doc """
-    @param t {number} parametric timing value
-    @return {number}
-  """
-  def sample_curve_derivative_x(t, {ax, bx, cx, _ay, _by, _cy}) do
+  # `t` is the parametric timing value.
+  @spec sample_curve_derivative_x(float, tuple) :: float
+  defp sample_curve_derivative_x(t, {ax, bx, cx, _ay, _by, _cy}) do
     (3.0 * ax * t + 2.0 * bx) * t + cx
   end
 
 
-  @doc """
-  Given an x value, find a parametric value it came from.
+  # Given an x value, find a parametric value it came from.
 
-	  @param x {number} value of x along the bezier curve, 0.0 <= x <= 1.0
-		@param epsilon {number} accuracy limit of t for the given x
-		@return {number} the t value corresponding to x
-  """
-  def solve_curve_x(x, epsilon, coefficients) do
+  # The `x` is the value of `x` along the bezier curve, `0.0 <= x <= 1.0`
+  
+	# The `epsilon` is the accuracy limit of `t` for the given `x`
+  @spec solve_curve_x(float, float, tuple) :: float
+  defp solve_curve_x(x, epsilon, coefficients) do
     t2 = x
 
     t2 =
@@ -119,6 +111,7 @@ defmodule CubicBezier do
       IO.puts "COULD NOT SOLVE CURVE X"
       x
 
+      # TODO: convert to Elixir code as fall-back
       # Fall back to the bisection method for reliability.
       # t0 = 0.0;
       # t1 = 1.0;
@@ -150,44 +143,70 @@ defmodule CubicBezier do
   end
 
     
-  @doc """
-    @param x {number} the value of x along the bezier curve, 0.0 <= x <= 1.0
-		@param epsilon {number} the accuracy of t for the given x
-    @return {number} the y value along the bezier curve
-    
-    Renamed from `solve`
-  """
-  def solve_with_epsilon(x, epsilon, coefficients) do
+  # Returns the y value along the bezier curve.
+  
+  # `x` is the value of x along the bezier curve, `0.0 <= x <= 1.0`
+
+  # `epsilon` is the accuracy of `t` for the given `x`.
+  @spec solve_with_epsilon(float, float, tuple) :: float
+  defp solve_with_epsilon(x, epsilon, coefficients) do
     sample_curve_y(solve_curve_x(x, epsilon, coefficients), coefficients)
   end
 
 
   @doc """
   Given `x` (a float between `0.0` and `1.0`), compute the `y`. 
-  Optionally, a duration can be provided which can provide greater accuracy. 
-  The default duration is 400 (ms), which is a common animation / transition duration.
-  """
-  def solve(x, easing, duration \\ @default_duration)
-  when is_atom(easing) do
-    control_points = control_points(easing)
-    solve(x, control_points, duration)
-  end
 
-  def solve(x, control_points, duration)
-  when is_tuple(control_points) do
+  Either an easing atom or control points tuple can be provided.  
+  Most common easing equations are support, but if an unsupported atom 
+  is given, the control points for `:linear` are returned.
+
+  See: https://gist.github.com/terkel/4377409
+
+  ## Options
+
+  - `duration` (integer) - can provide greater accuracy.  
+  The default duration is 400 (ms), which is a common animation / transition duration.
+
+  ## Examples
+
+  ```elixir
+  iex> CubicBezier.solve(0.50, :ease_out_quad)
+  0.7713235628639843
+  ```
+
+  ```elixir
+  iex> CubicBezier.solve(0.5, {0.250,  0.460,  0.450,  0.940})
+  0.7713235628639843
+  ```
+
+  ```elixir
+  iex(1)> Enum.map([0.0, 0.25, 0.5, 0.75, 1.0], fn x -> 
+  ...(1)> {x, Float.round(CubicBezier.solve(x, :ease_out_quad), 3)}
+  ...(1)> end)
+  [{0.0, 0.0}, {0.25, 0.453}, {0.5, 0.771}, {0.75, 0.936}, {1.0, 1.0}]
+  ```
+  """
+  @spec solve(float, atom | tuple, list) :: float
+  def solve(x, easing_or_control_points, opts \\ [])
+  when is_float(x) and is_list(opts) do
+    control_points =
+      case easing_or_control_points do
+        easing when is_atom(easing) -> control_points(easing)
+        control_points when is_tuple(control_points) -> control_points
+      end
+    
+    # solve(x, control_points, opts)
+    duration = Keyword.get(opts, :duration, @default_duration)
     coefficients = calculate_coefficients(control_points)
     solve_with_epsilon(x, solve_epsilon(duration), coefficients)
   end
-  
 
 
-  @doc """
-  Return a control points tuple based on 
-  the easing equation name.
-
-  See: https://gist.github.com/terkel/4377409
-  """
-  def control_points(atom) when is_atom(atom) do
+  # Return a control points tuple based on 
+  # the easing equation name. 
+  @spec control_points(atom) :: tuple
+  defp control_points(atom) when is_atom(atom) do
     easing = %{
       linear:             {0.250,  0.250,  0.750,  0.750},
       ease:               {0.250,  0.100,  0.250,  1.000},
