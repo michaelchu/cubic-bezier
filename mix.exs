@@ -7,7 +7,7 @@ defmodule CubicBezier.MixProject do
     [
       app: :cubic_bezier,
       description: "Elixir implementation of the CSS cubic-bezier function.",
-      version: File.read!("VERSION"),
+      version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
